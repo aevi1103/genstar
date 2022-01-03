@@ -23,7 +23,7 @@ import Layout from "../../components/layout";
 import { useLocaleString, useEmployee } from "../../utils/hooks";
 import { baseUrl } from "../../utils/api";
 import EmployeeForm from "../../components/admin/employee-form";
-import RateForm from "../../components/admin/rate-form";
+import RateModal from "../../components/admin/rate-modal";
 
 const DeleteButton = ({ employeeId, setIsModalVisible }) => {
   const { mutate } = useSWRConfig();
@@ -32,23 +32,26 @@ const DeleteButton = ({ employeeId, setIsModalVisible }) => {
   const onDelete = async () => {
     try {
       setDeleting(true);
-      await fetch(`${baseUrl}/Employee/${employeeId}`, {
+      const response = await fetch(`${baseUrl}/Employee/${employeeId}`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
         },
       });
-      setIsModalVisible(false);
-      mutate(`${baseUrl}/Employee`);
-      Modal.success({
-        title: "Success",
-        content: "User successfully deleted!",
-      });
-    } catch (error) {
-      Modal.error({
-        title: "Error",
-        content: JSON.stringify(error),
-      });
+
+      if (response.ok) {
+        setIsModalVisible(false);
+        mutate(`${baseUrl}/Employee`);
+        Modal.success({
+          title: "Success",
+          content: "User successfully deleted!",
+        });
+      } else {
+        Modal.error({
+          title: "Error",
+          content: "Something went wrong",
+        });
+      }
     } finally {
       setDeleting(false);
     }
@@ -100,7 +103,13 @@ const Employee = () => {
       render: (text, record) => (
         <Space>
           <Tooltip title="Edit">
-            <span className="cursor-pointer" onClick={() => onEdit(record)}>
+            <span
+              className="cursor-pointer"
+              onClick={() => onEdit(record)}
+              onKeyPress={() => {}}
+              role="button"
+              tabIndex={0}
+            >
               <EditOutlined />
             </span>
           </Tooltip>
@@ -111,7 +120,13 @@ const Employee = () => {
           <Tooltip title="Daily Rate">
             <span
               className="cursor-pointer"
-              onClick={() => setRateModalVisible(true)}
+              onClick={() => {
+                setRateModalVisible(true);
+                setCurrentEmpId(record.empployeeId);
+              }}
+              onKeyPress={() => {}}
+              role="button"
+              tabIndex={0}
             >
               <WalletOutlined />
             </span>
@@ -120,32 +135,58 @@ const Employee = () => {
       ),
     },
     {
-      title: "Name",
-      dataIndex: "firstName",
-      render: (text, { firstName, lastName }) => (
-        <span>
-          {lastName}, {firstName}
-        </span>
-      ),
+      title: "Personal Info",
+      children: [
+        {
+          title: "Name",
+          dataIndex: "firstName",
+          render: (text, { firstName, lastName }) => (
+            <span>
+              {lastName}, {firstName}
+            </span>
+          ),
+        },
+        {
+          title: "Mobile Number",
+          dataIndex: "phoneNumber",
+        },
+        {
+          title: "Address",
+          dataIndex: "address",
+        },
+        {
+          title: "Date Hired",
+          dataIndex: "dateHired",
+          render: (text, { dateHired }) =>
+            dateHired && getLocaleDateString(dateHired),
+        },
+        {
+          title: "Notes",
+          dataIndex: "notes",
+        },
+      ],
     },
     {
-      title: "Mobile Number",
-      dataIndex: "phoneNumber",
+      title: "Rate per Day",
+      dataIndex: "dailyRate",
+      render: (text, { rate }) => rate?.ratePerDay,
     },
     {
-      title: "Address",
-      dataIndex: "address",
+      title: "Benefits",
+      children: [
+        {
+          title: "SSS",
+          dataIndex: "sss",
+          render: (text, { rate }) => rate?.sss,
+        },
+        {
+          title: "Pag-ibig",
+          dataIndex: "rate",
+          render: (text, { rate }) => rate?.pagibig,
+        },
+      ],
     },
-    {
-      title: "Date Hired",
-      dataIndex: "dateHired",
-      render: (text, { dateHired }) =>
-        dateHired && getLocaleDateString(dateHired),
-    },
-    {
-      title: "Notes",
-      dataIndex: "notes",
-    },
+
     {
       title: "Date Created",
       dataIndex: "dateCreated",
@@ -216,14 +257,11 @@ const Employee = () => {
         />
       </Modal>
 
-      <Modal
-        title="Add Rate"
-        visible={rateModalVisible}
-        onCancel={() => setRateModalVisible(false)}
-        okText="Submit"
-      >
-        <RateForm />
-      </Modal>
+      <RateModal
+        rateModalVisible={rateModalVisible}
+        setRateModalVisible={setRateModalVisible}
+        employeeId={currentEmpId}
+      />
     </>
   );
 };

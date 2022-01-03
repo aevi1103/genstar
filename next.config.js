@@ -15,9 +15,7 @@ module.exports = withAntdLess({
     exportLocalsConvention: "camelCase",
     exportOnlyLocals: false,
     // ...
-    getLocalIdent: (context, localIdentName, localName, options) => {
-      return "whatever_random_class_name";
-    },
+    getLocalIdent: () => "whatever_random_class_name",
   },
 
   // Other Config Here...

@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -6,9 +5,9 @@ import { Layout, Menu } from "antd";
 import routes from "../utils/routes";
 
 const { SubMenu } = Menu;
-const { Header, Content, Footer } = Layout;
+const { Header, Content } = Layout;
 
-const AppLayout = ({ children }) => {
+function AppLayout({ children }) {
   const { pathname } = useRouter();
   return (
     <>
@@ -43,6 +42,6 @@ const AppLayout = ({ children }) => {
       </Layout>
     </>
   );
-};
+}
 
 export default AppLayout;
