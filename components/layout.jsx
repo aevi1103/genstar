@@ -7,7 +7,7 @@ import routes from "../utils/routes";
 const { SubMenu } = Menu;
 const { Header, Content } = Layout;
 
-function AppLayout({ children }) {
+const AppLayout = ({ children }) => {
   const { pathname } = useRouter();
   return (
     <>
@@ -42,6 +42,6 @@ function AppLayout({ children }) {
       </Layout>
     </>
   );
-}
+};
 
 export default AppLayout;

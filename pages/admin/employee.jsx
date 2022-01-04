@@ -1,5 +1,6 @@
 import { useState } from "react";
 import moment from "moment";
+import Link from "next/link";
 import { useSWRConfig } from "swr";
 import Head from "next/head";
 import {
@@ -140,10 +141,16 @@ const Employee = () => {
         {
           title: "Name",
           dataIndex: "firstName",
-          render: (text, { firstName, lastName }) => (
-            <span>
-              {lastName}, {firstName}
-            </span>
+          render: (text, { firstName, lastName, empployeeId }) => (
+            <Tooltip title="Click to see employee info">
+              <a>
+                <Link href={`/employee/${empployeeId}`}>
+                  <a href>
+                    {lastName}, {firstName}
+                  </a>
+                </Link>
+              </a>
+            </Tooltip>
           ),
         },
         {
