@@ -21,8 +21,8 @@ const routes = [
         path: "/admin/cash-advance",
       },
       {
-        title: "Cash Advance Payments",
-        path: "/admin/cash-advance-payments",
+        title: "QR Time Card",
+        path: "/admin/time-card-qr-scanner",
       },
     ],
   },

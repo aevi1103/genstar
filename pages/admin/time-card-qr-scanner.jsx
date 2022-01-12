@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import numeral from "numeral";
 import axios from "axios";
 import { Row, Col, Modal, Typography, Space } from "antd";
 import dynamic from "next/dynamic";
@@ -10,11 +11,11 @@ import { useLocaleString, useLocaleDateString } from "../../utils/hooks";
 
 const { Title } = Typography;
 
-const QrReaderWithNoSSR = dynamic(() => import("react-qr-reader"), {
+const QrReaderWithNoSSR = dynamic(() => import("react-qr-barcode-scanner"), {
   ssr: false,
 });
 
-const QrScanner = () => {
+const TimeCardQrScanner = () => {
   const { getLocaleDateString: getLocaleString } = useLocaleString();
   const { getLocaleDateString } = useLocaleDateString();
   const [employeeId, setEmployeeId] = useState(null);
@@ -24,6 +25,11 @@ const QrScanner = () => {
     axios(`${baseUrl}/Employee/hour/${id}`)
       .then((response) => {
         setEmployee(response.data);
+
+        setTimeout(() => {
+          setEmployeeId(null);
+          setEmployee(null);
+        }, 3 * 1000);
       })
       .catch((error) => {
         Modal.error({
@@ -38,24 +44,22 @@ const QrScanner = () => {
     timeInOutUser(employeeId);
   }, [employeeId]);
 
-  const onScan = (data) => {
-    setEmployeeId(data);
-  };
-
-  const onError = (err) => {
-    Modal.error({
-      title: "Error",
-      content: (
-        <Row gutter={[12, 12]}>
-          <Col span={24}>Camera error please refresh!</Col>
-          <Col span={24}>{JSON.stringify(err)}</Col>
-        </Row>
-      ),
-    });
+  const onScan = (err, result) => {
+    if (result) {
+      setEmployeeId(result.text);
+      return;
+    }
+    setEmployeeId(null);
   };
 
   return (
-    <Layout>
+    <Layout
+      contentProps={{
+        style: {
+          backgroundColor: "#F0F2F5",
+        },
+      }}
+    >
       <Head>
         <title>QR Scanner</title>
         <link rel="icon" href="/favicon.ico" />
@@ -64,15 +68,11 @@ const QrScanner = () => {
         <Col>
           {!employee ? (
             <>
-              <QrReaderWithNoSSR
-                delay={500}
-                resolution={1080}
-                onError={onError}
-                onScan={onScan}
-                style={{ width: 250 }}
-                showViewFinder={false}
-              />
-              <p>{employeeId ?? "scan"}</p>
+              <Title level={4}>GENSTAR EMPLOYEE TIME CARD</Title>
+              <QrReaderWithNoSSR width={500} height={500} onUpdate={onScan} />
+              <small className="text-slate-400">
+                {employeeId ?? "Scan Employee QR Code"}
+              </small>
             </>
           ) : (
             <>
@@ -111,7 +111,9 @@ const QrScanner = () => {
                       Total Hours Worked:
                     </span>
                     <span className="text-2xl">
-                      {employee?.timeInOutInfo?.totalHoursWorked}
+                      {numeral(
+                        employee?.timeInOutInfo?.totalHoursWorked
+                      ).format("0.00")}
                     </span>
                   </Space>
                 </p>
@@ -124,4 +126,4 @@ const QrScanner = () => {
   );
 };
 
-export default QrScanner;
+export default TimeCardQrScanner;

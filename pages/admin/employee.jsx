@@ -25,6 +25,7 @@ import { useLocaleString, useEmployee } from "../../utils/hooks";
 import { baseUrl } from "../../utils/api";
 import EmployeeForm from "../../components/admin/employee-form";
 import RateModal from "../../components/admin/rate-modal";
+import numeral from "numeral";
 
 const DeleteButton = ({ employeeId, setIsModalVisible }) => {
   const { mutate } = useSWRConfig();
@@ -176,24 +177,61 @@ const Employee = () => {
     {
       title: "Rate per Day",
       dataIndex: "dailyRate",
+      width: 100,
       render: (text, { rate }) => rate?.ratePerDay,
     },
     {
-      title: "Benefits",
+      title: "Deductions",
       children: [
         {
-          title: "SSS",
-          dataIndex: "sss",
-          render: (text, { rate }) => rate?.sss,
+          title: "Benefits",
+          children: [
+            {
+              title: "SSS",
+              dataIndex: "sss",
+              width: 100,
+              render: (text, { rate }) => rate?.sss,
+            },
+            {
+              title: "Pag-ibig",
+              dataIndex: "rate",
+              width: 100,
+              render: (text, { rate }) => rate?.pagibig,
+            },
+          ],
         },
         {
-          title: "Pag-ibig",
-          dataIndex: "rate",
-          render: (text, { rate }) => rate?.pagibig,
+          title: "Cash Advance",
+          children: [
+            {
+              title: "Total",
+              dataIndex: "totalCashAdvance",
+              width: 100,
+              render: (text, { totalCashAdvance }) => totalCashAdvance,
+            },
+            {
+              title: "Payments",
+              dataIndex: "totalCashAdvancePaid",
+              width: 100,
+              render: (text, { totalCashAdvancePaid }) => totalCashAdvancePaid,
+            },
+            {
+              title: "Balance",
+              dataIndex: "totalCashAdvancePaid",
+              width: 100,
+              render: (text, { balance }) => balance,
+            },
+            {
+              title: "Deduction % per Period",
+              dataIndex: "rate",
+              width: 100,
+              render: (text, { rate }) =>
+                numeral(rate?.cashAdvanceDeductionPercent).format("%"),
+            },
+          ],
         },
       ],
     },
-
     {
       title: "Date Created",
       dataIndex: "dateCreated",
@@ -237,6 +275,8 @@ const Employee = () => {
               columns={columns}
               dataSource={dataSource}
               pagination={false}
+              bordered
+              size="small"
             />
           </Col>
         </Row>

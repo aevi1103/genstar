@@ -7,7 +7,7 @@ import routes from "../utils/routes";
 const { SubMenu } = Menu;
 const { Header, Content } = Layout;
 
-const AppLayout = ({ children }) => {
+const AppLayout = ({ children, contentProps }) => {
   const { pathname } = useRouter();
   return (
     <>
@@ -37,7 +37,9 @@ const AppLayout = ({ children }) => {
             )}
           </Menu>
         </Header>
-        <Content className="m-5 p-5 bg-white">{children}</Content>
+        <Content className="m-5 p-5 bg-white" {...contentProps}>
+          {children}
+        </Content>
         {/* <Footer className="text-center">Genstar Footer</Footer> */}
       </Layout>
     </>

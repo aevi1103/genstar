@@ -15,6 +15,7 @@ const RateModal = ({ rateModalVisible, setRateModalVisible, employeeId }) => {
       if (response.ok) {
         const data = await response?.json();
         const { ratePerDay, pagibig, sss, empployeeId } = data || {};
+
         form.setFieldsValue({
           empployeeId,
           ratePerDay,
@@ -78,7 +79,7 @@ const RateModal = ({ rateModalVisible, setRateModalVisible, employeeId }) => {
         form={form}
         onFinish={onFinish}
         labelCol={{
-          span: 6,
+          span: 10,
         }}
       >
         <Form.Item
