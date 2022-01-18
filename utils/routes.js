@@ -9,7 +9,7 @@ const routes = [
     path: "/admin/payroll/sub-menu",
     submenu: [
       {
-        title: "Hours",
+        title: "Employee Hours",
         path: "/admin/payroll",
       },
       {
@@ -23,6 +23,10 @@ const routes = [
       {
         title: "QR Time Card",
         path: "/admin/time-card-qr-scanner",
+      },
+      {
+        title: "Reports",
+        path: "/admin/reports",
       },
     ],
   },
